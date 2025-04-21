@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #dcebfd;
+}
+
+svg {
+  display: block;
+}
+
+svg path {
+  fill: #002253;
+}
