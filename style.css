@@ -1,0 +1,42 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #dcebfd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body {
+  overflow: hidden;
+  height: 95svh;
+  width: 100svw;
+}
+
+canvas {
+  display: block;
+}
+
+#p5-wrapper {
+  transform: translateY(-30vh);
+  overflow: hidden;
+}
+
+@media only screen and (max-width: 1200px) {
+  #p5-wrapper {
+    transform: scale(0.8) translateY(-30vh);
+  }
+}
+
+@media only screen and (max-width: 991px) {
+  #p5-wrapper {
+    transform: scale(0.6) translateY(-30vh);
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  #p5-wrapper {
+    transform: scale(0.4) translateX(-20vh) rotate(-90deg);
+  }
+}
