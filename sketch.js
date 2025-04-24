@@ -21,7 +21,7 @@ function draw() {
   let clampedVol = rawVol > 0.025 ? rawVol : 0;
   smoothedVol = lerp(smoothedVol, clampedVol, smoothingFactor);
 
-  let baseRamp = map(smoothedVol, 0, 0.2, 0, 200);
+  let baseRamp = map(smoothedVol, 0, 0.2, 0, 600);
 
   for (let i = 0; i < 5; i++) {
     let xOffset = i * 200 + i * 20 + 5;
