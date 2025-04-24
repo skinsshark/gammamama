@@ -18,7 +18,6 @@ function draw() {
   background('#dcebfd');
 
   let rawVol = Math.round(mic.getLevel() * 50) / 50;
-  console.log({ rawVol });
   let clampedVol = rawVol > 0.025 ? rawVol : 0;
   smoothedVol = lerp(smoothedVol, clampedVol, smoothingFactor);
 
@@ -158,4 +157,9 @@ function drawM(xOffset, yOffset, rampLeft, rampRight) {
   vertex(xOffset + 155.981, yOffset + 0.913003 - rampRight);
 
   endShape(CLOSE);
+}
+
+// start audio capture
+function mousePressed() {
+  userStartAudio();
 }
