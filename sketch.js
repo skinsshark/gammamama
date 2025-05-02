@@ -2,11 +2,23 @@ let mic,
   smoothedVol = 0,
   smoothingFactor = 0.25;
 
-// for tweaking the curve offsets
-const yAdj = [1.4, 1.1, 1.05];
+const Letters = Object.freeze({
+  A: Symbol('A'),
+  M: Symbol('M'),
+});
+
+const letters = [
+  Letters.M,
+  Letters.A,
+  Letters.M,
+  Letters.A,
+  Letters.M,
+  Letters.A,
+];
 
 function setup() {
-  const cnv = createCanvas(1090, 1000);
+  userStartAudio();
+  const cnv = createCanvas(1050, 1000);
   cnv.parent('p5-wrapper');
 
   mic = new p5.AudioIn();
@@ -22,17 +34,78 @@ function draw() {
   smoothedVol = lerp(smoothedVol, clampedVol, smoothingFactor);
 
   let baseRamp = map(smoothedVol, 0, 0.2, 0, 600);
+  let xOffset = 25;
 
-  for (let i = 0; i < 5; i++) {
-    let xOffset = i * 200 + i * 20 + 5;
+  for (let i = 0; i < letters.length; i++) {
     let rampLeft = ((baseRamp * (i + 1)) / 3) * 0.9;
-    let rampRight = ((baseRamp * (i + 1)) / 3) * (yAdj[i] || 1);
-    drawM(xOffset, 850, rampLeft, rampRight);
+    let rampRight = (baseRamp * (i + 1)) / 3;
+    if (letters[i] === Letters.M) {
+      drawM(xOffset, 850, rampLeft, rampRight);
+      xOffset += 210;
+    } else if (letters[i] === Letters.A) {
+      push();
+      scale(0.78);
+      drawA(
+        xOffset / 0.78,
+        1090,
+        rampLeft / 0.78,
+        rampRight / 0.78,
+        clampedVol > 0.03
+      );
+      pop();
+      xOffset += 125;
+    }
   }
+}
+
+function drawA(xOffset, yOffset, rampLeft, rampRight, isAngledBeam) {
+  const beamOffset = isAngledBeam ? 10 : 0;
+  // A!!!
+  fill('rgba(0, 0, 0, 0)');
+  stroke('rgba(0,0,0,0)');
+  strokeCap(PROJECT);
+  strokeJoin(MITER);
+  stroke('#002253');
+  strokeWeight(40);
+  beginShape();
+  vertex(20.3994 + xOffset, 154.898 + yOffset);
+  vertex(20.3994 + xOffset, 72.9903 + yOffset - rampRight);
+  bezierVertex(
+    20.3982 + xOffset,
+    53.3269 + yOffset - rampRight,
+    34.9573 + xOffset,
+    20 + yOffset - rampRight,
+    73.2029 + xOffset,
+    20 + yOffset - rampRight
+  );
+  bezierVertex(
+    111.446 + xOffset,
+    20 + yOffset - rampRight,
+    126.009 + xOffset,
+    53.3269 + yOffset - rampRight,
+    126.01 + xOffset,
+    72.9903 + yOffset - rampRight
+  );
+  // vertex(126.01 + xOffset, 123.944+yOffset);
+  // vertex(126.01 + xOffset, 105.505+yOffset);
+  vertex(126.01 + xOffset, 154.898 + yOffset);
+  endShape();
+
+  // horizontal beam
+  stroke('#002253');
+  strokeCap(SQUARE);
+  strokeWeight(37);
+  beginShape();
+  vertex(20.3994 + xOffset, 105.505 + yOffset - rampRight + beamOffset);
+  vertex(126.01 + xOffset, 105.505 + yOffset - rampRight);
+  endShape();
 }
 
 function drawM(xOffset, yOffset, rampLeft, rampRight) {
   fill('#002253');
+  noStroke();
+  // strokeWeight(2);
+  // stroke("#002253");
 
   beginShape();
 
@@ -157,9 +230,4 @@ function drawM(xOffset, yOffset, rampLeft, rampRight) {
   vertex(xOffset + 155.981, yOffset + 0.913003 - rampRight);
 
   endShape(CLOSE);
-}
-
-// start audio capture
-function mousePressed() {
-  userStartAudio();
 }
