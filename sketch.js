@@ -2,6 +2,9 @@ let mic,
   smoothedVol = 0,
   smoothingFactor = 0.25;
 
+// for tweaking the second curve offsets
+const yAdj = [1.4, 1, 1.1, 1, 1.05, 1];
+
 const Letters = Object.freeze({
   A: Symbol('A'),
   M: Symbol('M'),
@@ -37,30 +40,38 @@ function draw() {
   let xOffset = 25;
 
   for (let i = 0; i < letters.length; i++) {
+    // rampLeft is for the first peak in the M
     let rampLeft = ((baseRamp * (i + 1)) / 3) * 0.9;
-    let rampRight = (baseRamp * (i + 1)) / 3;
+    // rampRight is for the second peak in the M and the A
+    // sometimes there is an adjustment made for a more pronounced ramp
+    let rampRight = ((baseRamp * (i + 1)) / 3) * yAdj[i];
+
     if (letters[i] === Letters.M) {
-      drawM(xOffset, 850, rampLeft, rampRight);
+      drawM({
+        xOffset,
+        yOffset: 850,
+        rampLeft,
+        rampRight,
+      });
       xOffset += 210;
     } else if (letters[i] === Letters.A) {
       push();
       scale(0.78);
-      drawA(
-        xOffset / 0.78,
-        1090,
-        rampLeft / 0.78,
-        rampRight / 0.78,
-        clampedVol > 0.03
-      );
+      drawA({
+        xOffset: xOffset / 0.78,
+        yOffset: 1090,
+        rampRight: rampRight / 0.78,
+        isAngledBeam: clampedVol > 0.03,
+      });
       pop();
       xOffset += 125;
     }
   }
 }
 
-function drawA(xOffset, yOffset, rampLeft, rampRight, isAngledBeam) {
+function drawA({ xOffset, yOffset, rampRight, isAngledBeam }) {
   const beamOffset = isAngledBeam ? 10 : 0;
-  // A!!!
+
   fill('rgba(0, 0, 0, 0)');
   stroke('rgba(0,0,0,0)');
   strokeCap(PROJECT);
@@ -86,8 +97,6 @@ function drawA(xOffset, yOffset, rampLeft, rampRight, isAngledBeam) {
     126.01 + xOffset,
     72.9903 + yOffset - rampRight
   );
-  // vertex(126.01 + xOffset, 123.944+yOffset);
-  // vertex(126.01 + xOffset, 105.505+yOffset);
   vertex(126.01 + xOffset, 154.898 + yOffset);
   endShape();
 
@@ -96,16 +105,14 @@ function drawA(xOffset, yOffset, rampLeft, rampRight, isAngledBeam) {
   strokeCap(SQUARE);
   strokeWeight(37);
   beginShape();
-  vertex(20.3994 + xOffset, 105.505 + yOffset - rampRight + beamOffset);
-  vertex(126.01 + xOffset, 105.505 + yOffset - rampRight);
+  vertex(20.3994 + xOffset, 105.505 + yOffset - rampRight / 1.5 + beamOffset);
+  vertex(126.01 + xOffset, 105.505 + yOffset - rampRight / 1.5);
   endShape();
 }
 
-function drawM(xOffset, yOffset, rampLeft, rampRight) {
+function drawM({ xOffset, yOffset, rampLeft, rampRight }) {
   fill('#002253');
   noStroke();
-  // strokeWeight(2);
-  // stroke("#002253");
 
   beginShape();
 
